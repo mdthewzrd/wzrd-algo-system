@@ -1,0 +1,183 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "WZRD Test Plan",
+  "description": "Schema for strategy test plan configuration",
+  "type": "object",
+  "required": ["data", "run"],
+  "properties": {
+    "data": {
+      "type": "object",
+      "required": ["source", "start", "end", "bars"],
+      "properties": {
+        "source": {
+          "type": "string",
+          "enum": ["polygon", "alpaca", "mock"],
+          "description": "Data source for backtesting"
+        },
+        "start": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "description": "Start date (YYYY-MM-DD)"
+        },
+        "end": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "description": "End date (YYYY-MM-DD)"
+        },
+        "bars": {
+          "type": "string",
+          "enum": ["1min", "5min", "15min", "1H", "1D"],
+          "description": "Bar frequency (must match strategy)"
+        },
+        "extended_hours": {
+          "type": "boolean",
+          "default": false,
+          "description": "Include extended hours data"
+        }
+      }
+    },
+    "run": {
+      "type": "object",
+      "required": ["metrics", "reports"],
+      "properties": {
+        "walk_forward": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use walk-forward analysis"
+        },
+        "walk_forward_days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 365,
+          "default": 30,
+          "description": "Days per walk-forward window"
+        },
+        "metrics": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "Sharpe",
+              "MaxDD",
+              "WinRate",
+              "Turnover",
+              "ProfitFactor",
+              "AvgTrade",
+              "TotalReturn",
+              "Volatility",
+              "Skewness",
+              "Kurtosis"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "reports": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "chart",
+              "equity_curve",
+              "trades",
+              "signals",
+              "drawdown",
+              "monthly_returns",
+              "trade_analysis"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "benchmark": {
+          "type": "string",
+          "description": "Benchmark symbol for comparison",
+          "pattern": "^[A-Z]{1,10}$"
+        }
+      }
+    },
+    "constraints": {
+      "type": "object",
+      "properties": {
+        "max_position_pct": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2,
+          "default": 1.0,
+          "description": "Maximum position size as % of equity"
+        },
+        "max_orders_per_min": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 10,
+          "description": "Maximum orders per minute"
+        },
+        "max_trades_per_day": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 100,
+          "description": "Maximum trades per day"
+        },
+        "min_trade_spacing_minutes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1440,
+          "default": 0,
+          "description": "Minimum minutes between trades"
+        }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "properties": {
+        "require_worked_examples": {
+          "type": "boolean",
+          "default": true,
+          "description": "Require worked examples to pass"
+        },
+        "max_acceptable_drift": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.1,
+          "description": "Max acceptable drift in worked examples"
+        },
+        "shift_test": {
+          "type": "boolean",
+          "default": true,
+          "description": "Run shift+1 degradation test"
+        },
+        "min_degradation_pct": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.5,
+          "description": "Minimum expected degradation from shift test"
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "properties": {
+        "initial_capital": {
+          "type": "number",
+          "minimum": 1000,
+          "maximum": 10000000,
+          "default": 100000,
+          "description": "Starting capital for backtest"
+        },
+        "currency": {
+          "type": "string",
+          "enum": ["USD", "EUR", "GBP"],
+          "default": "USD"
+        },
+        "timezone": {
+          "type": "string",
+          "default": "America/New_York"
+        }
+      }
+    }
+  }
+}

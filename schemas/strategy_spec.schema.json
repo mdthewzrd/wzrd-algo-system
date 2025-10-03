@@ -1,0 +1,254 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "WZRD Strategy Specification",
+  "description": "Schema for rule-based trading strategy specifications",
+  "type": "object",
+  "required": [
+    "name",
+    "universe",
+    "bars",
+    "session",
+    "features",
+    "entry_rules",
+    "exit_rules",
+    "execution",
+    "assumptions",
+    "bars_timestamp_is"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Human-readable strategy name",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "universe": {
+      "type": "array",
+      "description": "List of symbols to trade",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z]{1,10}$"
+      },
+      "minItems": 1,
+      "maxItems": 50
+    },
+    "bars": {
+      "type": "string",
+      "description": "Bar frequency",
+      "enum": ["1min", "5min", "15min", "1H", "1D"]
+    },
+    "session": {
+      "type": "object",
+      "required": ["tz", "start", "end"],
+      "properties": {
+        "tz": {
+          "type": "string",
+          "description": "Timezone for session times",
+          "default": "America/New_York"
+        },
+        "start": {
+          "type": "string",
+          "description": "Session start time (HH:MM)",
+          "pattern": "^([0-1][0-9]|2[0-3]):[0-5][0-9]$"
+        },
+        "end": {
+          "type": "string",
+          "description": "Session end time (HH:MM)",
+          "pattern": "^([0-1][0-9]|2[0-3]):[0-5][0-9]$"
+        },
+        "include_premarket": {
+          "type": "boolean",
+          "description": "Include pre-market hours",
+          "default": false
+        }
+      }
+    },
+    "features": {
+      "type": "object",
+      "description": "Computed features available to rules",
+      "patternProperties": {
+        "^[a-zA-Z_][a-zA-Z0-9_]*$": {
+          "type": "object",
+          "required": ["type"],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "session_vwap",
+                "zscore",
+                "sma",
+                "ema",
+                "rolling_std",
+                "rolling_min",
+                "rolling_max",
+                "rsi",
+                "bbands"
+              ]
+            },
+            "input": {
+              "type": "string",
+              "description": "Input expression (e.g., 'close - vwap')"
+            },
+            "window": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000
+            },
+            "period": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200
+            }
+          }
+        }
+      }
+    },
+    "entry_rules": {
+      "type": "array",
+      "description": "Entry signal rules",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "side", "when"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^E[0-9]+$"
+          },
+          "side": {
+            "type": "string",
+            "enum": ["long", "short"]
+          },
+          "when": {
+            "type": "string",
+            "description": "Boolean expression for entry condition"
+          },
+          "cooldown_bars": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000,
+            "default": 0
+          },
+          "max_position": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "default": 1.0
+          }
+        }
+      }
+    },
+    "exit_rules": {
+      "type": "array",
+      "description": "Exit signal rules",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "type"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^X[0-9]+$"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "target_touch",
+              "stop_pct",
+              "stop_dollar",
+              "time_limit",
+              "condition"
+            ]
+          },
+          "target": {
+            "type": "string",
+            "description": "Target price expression (for target_touch)"
+          },
+          "value": {
+            "type": "number",
+            "description": "Stop percentage or dollar amount"
+          },
+          "bars": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Time limit in bars"
+          },
+          "when": {
+            "type": "string",
+            "description": "Boolean expression for conditional exits"
+          }
+        }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "required": ["order_effective"],
+      "properties": {
+        "order_effective": {
+          "type": "string",
+          "enum": ["same_bar_close", "next_bar_open", "next_bar_close"],
+          "description": "When orders become effective"
+        },
+        "position_sizing": {
+          "type": "string",
+          "enum": ["fixed_dollar", "fixed_shares", "percent_equity"],
+          "default": "percent_equity"
+        },
+        "default_size": {
+          "type": "number",
+          "minimum": 0,
+          "default": 10000
+        }
+      }
+    },
+    "assumptions": {
+      "type": "object",
+      "required": ["slippage_bps", "fee_per_share"],
+      "properties": {
+        "slippage_bps": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Slippage in basis points"
+        },
+        "fee_per_share": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Commission fee per share"
+        }
+      }
+    },
+    "bars_timestamp_is": {
+      "type": "string",
+      "enum": ["bar_open_utc", "bar_close_utc"],
+      "description": "How to interpret bar timestamps"
+    },
+    "worked_examples": {
+      "type": "array",
+      "description": "Expected behavior examples for validation",
+      "items": {
+        "type": "object",
+        "required": ["date", "bar", "context", "expected"],
+        "properties": {
+          "date": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+          },
+          "bar": {
+            "type": "string",
+            "pattern": "^([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$"
+          },
+          "context": {
+            "type": "string",
+            "description": "Market conditions description"
+          },
+          "expected": {
+            "type": "string",
+            "description": "Expected strategy behavior"
+          }
+        }
+      }
+    }
+  }
+}

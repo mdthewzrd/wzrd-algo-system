@@ -1,10 +1,10 @@
-# 🚀 WZRD-Algo-Mini: Complete Trading Strategy System
+# 🚀 WZRD-Algo-System: Spec-Driven Trading Strategy Engine
 
-[![Strategy Generation](https://img.shields.io/badge/Strategy-Generation-blue)](apps/signal_codifier.py)
-[![Chart Visualization](https://img.shields.io/badge/Chart-Visualization-green)](apps/strategy_viewer_enhanced.py)
-[![Scan Builder](https://img.shields.io/badge/Scan-Builder-purple)](apps/scan_builder.py)
+[![Strategy Engine](https://img.shields.io/badge/Engine-Deterministic-blue)](engine/runner.py)
+[![Schema Validation](https://img.shields.io/badge/Validation-Schema--Based-green)](schemas/)
+[![Acceptance Testing](https://img.shields.io/badge/Testing-Acceptance--Driven-purple)](utils/validation.py)
 
-> **Complete trading strategy development workflow**: Natural Language → JSON Strategy → Interactive Charts
+> **Professional spec-driven trading system**: Rules → Deterministic Engine → Standardized Outputs
 
 ## 🎯 What This System Does
 

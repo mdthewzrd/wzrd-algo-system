@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "errors": [],
+  "warnings": [],
+  "tests": {
+    "schema_validation": true,
+    "worked_examples": true,
+    "session_compliance": true,
+    "rule_consistency": true
+  }
+}

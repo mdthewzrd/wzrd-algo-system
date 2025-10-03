@@ -1,0 +1,59 @@
+{
+  "name": "SPY VWAP Reversion v1",
+  "universe": ["SPY"],
+  "bars": "5min",
+  "session": {
+    "tz": "America/New_York",
+    "start": "09:30",
+    "end": "16:00",
+    "include_premarket": false
+  },
+  "features": {
+    "vwap": {
+      "type": "session_vwap"
+    },
+    "z": {
+      "type": "zscore",
+      "input": "close - vwap",
+      "window": 30
+    }
+  },
+  "entry_rules": [
+    {
+      "id": "E1",
+      "side": "long",
+      "when": "z <= -2.0",
+      "cooldown_bars": 10
+    }
+  ],
+  "exit_rules": [
+    {
+      "id": "X1",
+      "type": "target_touch",
+      "target": "vwap"
+    },
+    {
+      "id": "X2",
+      "type": "stop_pct",
+      "value": 0.0035
+    }
+  ],
+  "execution": {
+    "order_effective": "next_bar_open",
+    "position_sizing": "fixed_dollar",
+    "default_size": 10000
+  },
+  "assumptions": {
+    "slippage_bps": 1,
+    "fee_per_share": 0.0035
+  },
+  "bars_timestamp_is": "bar_close_utc",
+  "worked_examples": [
+    {
+      "date": "2025-09-18",
+      "bar": "14:17:00",
+      "context": "z = -2.12, price below VWAP",
+      "expected": "E1 triggers long; exit on X1 at VWAP touch"
+    }
+  ]
+}

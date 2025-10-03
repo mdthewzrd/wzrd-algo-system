@@ -1,0 +1,29 @@
+{
+  "strategy_name": "SPY VWAP Reversion v1",
+  "run_timestamp": "2025-10-03T16:18:57.537611",
+  "data_period": {
+    "start": "2024-09-15",
+    "end": "2024-09-26",
+    "bars": 924
+  },
+  "trade_summary": {
+    "total_trades": 11,
+    "winning_trades": 0,
+    "losing_trades": 0,
+    "win_rate": 0.0,
+    "total_pnl": 0.0,
+    "avg_pnl": 0.0,
+    "best_trade": 0.0,
+    "worst_trade": 0.0,
+    "avg_winning_trade": 0,
+    "avg_losing_trade": 0,
+    "profit_factor": Infinity
+  },
+  "metrics": {
+    "total_return_pct": 0.0,
+    "sharpe_ratio": 0,
+    "max_drawdown_pct": 0.0,
+    "volatility_pct": 0.0
+  },
+  "status": "completed"
+}

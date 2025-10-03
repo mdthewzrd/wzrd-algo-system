@@ -1,0 +1,39 @@
+data:
+  source: "mock"
+  start: "2024-09-15"
+  end: "2024-09-26"
+  bars: "5min"
+  extended_hours: false
+
+run:
+  walk_forward: false
+  metrics:
+    - "Sharpe"
+    - "MaxDD"
+    - "WinRate"
+    - "Turnover"
+    - "ProfitFactor"
+  reports:
+    - "chart"
+    - "equity_curve"
+    - "trades"
+    - "signals"
+    - "trade_analysis"
+  benchmark: "SPY"
+
+constraints:
+  max_position_pct: 1.0
+  max_orders_per_min: 10
+  max_trades_per_day: 20
+  min_trade_spacing_minutes: 5
+
+validation:
+  require_worked_examples: true
+  max_acceptable_drift: 0.1
+  shift_test: true
+  min_degradation_pct: 0.5
+
+environment:
+  initial_capital: 100000
+  currency: "USD"
+  timezone: "America/New_York"
