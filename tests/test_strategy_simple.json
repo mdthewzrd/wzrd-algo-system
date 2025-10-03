@@ -1,0 +1,34 @@
+{
+  "strategy_name": "Simple_Test_Strategy",
+  "description": "Basic test strategy for system validation",
+  "timeframe": "5min",
+  "symbol": "SPY",
+  "signals": [
+    {
+      "type": "entry_signal",
+      "timestamp": "2024-10-01 10:00:00",
+      "price": 575.00,
+      "reason": "Test entry signal",
+      "direction": "long",
+      "shares": 100,
+      "pnl": 0
+    },
+    {
+      "type": "exit_signal",
+      "timestamp": "2024-10-01 11:00:00",
+      "price": 580.00,
+      "reason": "Test exit signal",
+      "direction": "long",
+      "shares": 100,
+      "pnl": 500.0
+    }
+  ],
+  "entry_conditions": [
+    "Test condition 1",
+    "Test condition 2"
+  ],
+  "exit_conditions": [
+    "Test exit condition 1",
+    "Test exit condition 2"
+  ]
+}
